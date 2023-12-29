@@ -10,11 +10,11 @@ locals {
 
 data "google_compute_zones" "zones" {
   project = google_project.project.project_id
-  region = local.region
+  region  = local.region
 }
 
 resource "random_shuffle" "zone" {
-  input        = data.google_compute_zones.zones.names 
+  input        = data.google_compute_zones.zones.names
   result_count = 1
 }
 
@@ -65,7 +65,7 @@ resource "google_project_iam_member" "service_account_monitoring_viewer" {
 resource "google_container_cluster" "cluster" {
   project  = google_project.project.project_id
   name     = "${var.prefix}-${random_id.postfix.hex}"
-  location = random_shuffle.zone.result[0] 
+  location = random_shuffle.zone.result[0]
 
   network    = google_compute_network.vpc.self_link
   subnetwork = google_compute_subnetwork.subnet[0].self_link
@@ -88,12 +88,12 @@ resource "google_container_cluster" "cluster" {
       }
     }
   }
-  
+
   workload_identity_config {
     workload_pool = "${google_project.project.project_id}.svc.id.goog"
   }
 
-  logging_service    = "logging.googleapis.com/kubernetes"
-  monitoring_service = "monitoring.googleapis.com/kubernetes"
+  logging_service     = "logging.googleapis.com/kubernetes"
+  monitoring_service  = "monitoring.googleapis.com/kubernetes"
   deletion_protection = false
 }
